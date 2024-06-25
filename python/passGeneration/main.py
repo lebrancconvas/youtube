@@ -1,83 +1,80 @@
+import tkinter as tk 
 from random import sample
-import tkinter as tk
 from file import hashGeneration
 from os import getcwd
-from tkinter import messagebox as msgbox
 
 
-
-class passwordGenertion():
+class passwordGeneration():
     def __init__(self, window):
         self.window = window
-        #match password
-        self.label = tk.Label(window, text="Enter password:")
+
+        #show password
+        self.label = tk.Label(window, text="Enter Password lenght")
         self.label.pack()
 
-        self.passEntry = tk.Entry(window, width=10)
-        self.passEntry.pack() 
+        self.entry = tk.Entry(window, width=10) #you can change the width
+        self.entry.pack()
 
-        self.button = tk.Button(self.window, text="Submit", command=self.checkPassword)
-        self.button.pack(pady=10)
-
-        self.show_matched_pass = tk.Label(window)
-        self.show_matched_pass.pack()
-        
-        #show password 
-        self.label = tk.Label(window, text="Enter lenght of password:")
-        self.label.pack()
-
-        self.entry = tk.Entry(window, width=10)
-        self.entry.pack() 
 
         self.button = tk.Button(self.window, text="Submit", command=self.generate)
-        self.button.pack(pady=10)
-        
+        self.button.pack(padx=10, pady=10)
+
+        #show here
+
         self.show_pass = tk.Label(window)
         self.show_pass.pack()
+
+        #check for password
+
+        self.label = tk.Label(window, text="Enter Password")
+        self.label.pack()
+
+        self.passEntry = tk.Entry(window, width=10) #you can change the width
+        self.passEntry.pack()
+
+
+        self.button = tk.Button(self.window, text="Submit", command=self.checkPassword)
+        self.button.pack(padx=10, pady=10)
+
+
 
 
     def generate(self):
         charList = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()"
-        entry_value = self.entry.get().strip()
-        if entry_value is None:
-            self.show("No value given")
+        entryValue = self.entry.get().strip()
+        if entryValue is None:
+            self.show("No value is provided")
         else:
-            password = "".join(sample(charList, int(entry_value)))
+            password = "".join(sample(charList, int(entryValue)))
             print(password)
             self.show(password)
             app = hashGeneration(file=f"{getcwd()}/hashed.txt")
             app.writeHash(password)
     
-    
-    def show(self, text):
-        self.show_pass.config(text=text, fg='#fc6c85')
-
 
     def checkPassword(self):
-        entry_value = self.passEntry.get().strip()
-        if entry_value is not None:
+        entryValue = self.passEntry.get().strip()
+        if entryValue is not None:
             app = hashGeneration(file=f"{getcwd()}/hashed.txt")
-            if app.matchHash(entry_value):
-                print("It's matched")
-                self.showMatched("Correct Password")
+            if app.matchHash(entryValue):
+                self.show("Match found in database.")
             else:
-                self.showMatched("Wrong Password")
+                self.show("It's a wrong password, not found")
         else:
-            msgbox.showerror("Ran into some fucked up error")
-    
-    def showMatched(self, text):
-        self.show_matched_pass.config(text=text, fg="#fc6c85")
+            self.show("Ran into some fucked up problem. Please a password to match.")
 
 
-    
+
+    def show(self, text):
+        self.show_pass.config(text=text, fg="#ff77ff")
 
 
-        
+
 if __name__ == "__main__":
     window = tk.Tk()
-    e1 = tk.Entry(window)
-    window.title("Password Generator")
-    app = passwordGenertion(window)
+    entry1 = tk.Entry(window)
+    window.title("Password generator")
+    app = passwordGeneration(window)
     try:
         window.mainloop()
     except KeyboardInterrupt:
