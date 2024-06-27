@@ -1,59 +1,55 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 
-
-
 class Server():
     def __init__(self, host, port):
         self.host = host
         self.port = port
         self.sock = socket(AF_INET, SOCK_STREAM)
         self.buffer = 1024
-        self.clients = {} # to have multiple clients and list them here
-        self.addrs = {} # same as above
+        self.client = {}
+        self.addrs = {}
 
-    #starting the server and accepting the clients
     def serverStart(self):
         self.sock.bind((self.host, self.port))
         self.sock.listen(5)
+        print("We're connected master >_< ")
 
-        print("We're ready master >_< ")
+        #let's get it started
 
-        while True:
+        while True: 
             try:
                 cliSock, cliAddr = self.sock.accept()
-                print(f"Connection from {cliAddr}")
+                print(f"Con received from {cliAddr}")
 
-                self.clients[cliSock] = cliAddr # adding all the clients to self.clients arrays
+                self.client[cliSock] = cliAddr #to make multiple clients join the server and register in the client dict
                 self.addrs[cliAddr] = cliSock
-
+        
                 Thread(target=self.handling, args=(cliSock,)).start()
             except Exception as e:
-                print(e)
+                print(f"{e} Con closed")
 
-
-    #function to receieve texts and display them in the terminal
+    # to messages and display them in terminal    
     def handling(self, cliSock):
         while True:
-            try:
-                msg = cliSock.recv(self.buffer).decode("utf8")
-                ip, port = self.clients[cliSock] 
-                if msg:
-                    print(f"{msg} recieved from {port}")
-                    self.sendText(msg)
-            except Exception as e:
-                print(e)
+            msg = cliSock.recv(self.buffer).decode("utf8")
+            print(cliSock)
+            if msg:
+                print(f"{msg} received.")
+                self.sendTexts(msg)
+    
 
-    def sendText(self, msg):
-        for socket in self.clients:
+    def sendTexts(self, msg):
+        for socket in self.client:
             try:
                 socket.send(bytes(msg, "utf8"))
             except Exception as e:
                 print(e)
 
 
+
 if __name__ == "__main__":
     try:
         Server("localhost", 8000).serverStart()
     except KeyboardInterrupt:
-        print("Closed Connection.")
+        print("Closed Con")
