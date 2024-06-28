@@ -1,4 +1,4 @@
-from curses import A_UNDERLINE, echo, noecho, wrapper, curs_set, init_pair, COLOR_MAGENTA, color_pair, use_default_colors
+from curses import COLOR_CYAN, echo, noecho, wrapper, curs_set, init_pair, COLOR_MAGENTA, color_pair, use_default_colors
 from subprocess import DEVNULL, check_output, run
 from time import sleep
 from checkPassword import CheckNetwork
@@ -9,6 +9,7 @@ class Curses():
         self.message = message
         curs_set(0)  # Hide the cursor
         init_pair(1, COLOR_MAGENTA, -1)
+        init_pair(2, COLOR_CYAN, -1)
         self.stdscr.clear()
         self.stdscr.refresh()
         self.wifi = [] #a list to keep all networks
@@ -17,10 +18,11 @@ class Curses():
     
     def showNetworks(self):
         max_y, max_x = self.stdscr.getmaxyx()
-        center_y = 2
         center_x = (max_x // 2) - (len("|_______Available Networks________|") // 2)
         self.stdscr.clear()
-        self.stdscr.addstr(center_y, center_x, "|_______Available Networks________|", color_pair(1))
+        self.stdscr.addstr(0, (max_x // 2) - (len(self.message)), self.message, color_pair(2))
+        self.stdscr.refresh()
+        self.stdscr.addstr(2, center_x, "|_______Available Networks________|", color_pair(1))
         self.stdscr.refresh()
         conlist = check_output(["nmcli", '-f', 'SSID', 'dev', 'wifi', 'list'], universal_newlines=True)
         self.wifi = [line.split()[0] for line in conlist.splitlines()[1:]]
@@ -38,7 +40,7 @@ class Curses():
                 self.connnect(select)
             except KeyboardInterrupt:
                 self.stdscr.clear()
-                self.stdscr.addstr(center_y, center_x, "Progarm closed, press q key to close")
+                self.stdscr.addstr((max_y // 2), center_x, "Progarm closed, press q key to close")
                 break
 
 
