@@ -20,7 +20,7 @@ class Curses():
         self.stdscr.clear()
         self.stdscr.addstr(0, (maxx // 2) - (len(self.message)), self.message)
         self.stdscr.refresh() #without refreshing it won't show
-        
+        self.stdscr.addstr(2, centerX, heading)
         #list all the available networks with nmcli since this is available in most linux distro
         conlist = check_output(['nmcli', '-f', 'SSID', 'dev', 'wifi', 'list'], universal_newlines=True) #universal new lines use the /n
         self.wifi = [line.split()[0] for line in conlist.splitlines()[1:]]
