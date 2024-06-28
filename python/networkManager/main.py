@@ -1,6 +1,7 @@
-from curses import A_UNDERLINE, echo, newpad, noecho, wrapper, curs_set, init_pair, COLOR_MAGENTA, COLOR_BLACK, color_pair, use_default_colors
+from curses import A_UNDERLINE, echo, noecho, wrapper, curs_set, init_pair, COLOR_MAGENTA, color_pair, use_default_colors
+from subprocess import DEVNULL, check_output, run
 from time import sleep
-from subprocess import check_output
+from checkPassword import CheckNetwork
 
 class Curses():
     def __init__(self, stdscr, message):
@@ -10,7 +11,6 @@ class Curses():
         init_pair(1, COLOR_MAGENTA, -1)
         self.stdscr.clear()
         self.stdscr.refresh()
-
         self.wifi = [] #a list to keep all networks
 
 
@@ -46,49 +46,55 @@ class Curses():
 
     def connnect(self, select):
         max_y, max_x = self.stdscr.getmaxyx()
-        center_y = 2
         center_x = (max_x // 2) - (len("Program Closed") // 2)
         if 0 <= select < len(self.wifi):
             wifiName = self.wifi[select]
             echo()
-            self.stdscr.addstr(len(self.wifi) + 6, 0, "Enter password: ")
+            if self.checkPreviousPassword(wifiName):
+                self.stdscr.refresh()
+                self.stdscr.clear()
+                self.stdscr.addstr(len(self.wifi) + 6, center_x, f"Connected to {wifiName}. Press q to quit.")
+                self.stdscr.refresh()
+                if self.stdscr.getch() == ord('q'): quit()
+
+            else:
+                self.stdscr.clear()
+                self.stdscr.refresh()
+                self.stdscr.addstr(len(self.wifi) + 6, center_x, "Enter password: ")
+                self.stdscr.refresh()
+                password = self.stdscr.getstr().decode("utf8")
+                noecho()
+                self.connectToWifi(wifiName, password)
+                self.stdscr.clear()
+                self.stdscr.addstr(len(self.wifi) + 8, center_x, f"Connected to {wifiName}")
+                self.stdscr.refresh()
+                self.stdscr.getch()
+        else:
+            self.stdscr.addstr(len(self.wifi) + 8, center_x, "Invalid network selection.")
             self.stdscr.refresh()
-            password = self.stdscr.getstr().decode("utf8")
-            noecho()
+            self.stdscr.getch()
+
+    def checkPreviousPassword(self, wifiName):
+        if CheckNetwork(wifiName).isExist():
+            run(['nmcli', 'con', 'up', wifiName], stdout=DEVNULL)
+            return True
+        else:
+            self.stdscr.clear()
+            self.stdscr.addstr(10,10, "Something went wrong.")
+            self.stdscr.refresh()
+
+    def connectToWifi(self, wifiName, password):
+        try:
+            run(['nmcli', 'dev', 'wifi', 'connect', wifiName, 'password', password], check=True, stdout=DEVNULL)
+        except Exception as e:
+            print(e)
+            print(wifiName, password)
 
 
     def run(self):
         self.showNetworks()
         while True:
             if self.stdscr.getch() == ord('q'): break
-
-
-    
-
-
-
-
-
-'''
-    def run(self):
-            height, width = self.stdscr.getmaxyx()
-
-            while True:
-                for x in range(width - len(self.message), -1, -1):
-                    self.show(x)
-                    sleep(0.1)
-                
-                for x in range(1, width - len(self.message) + 1):
-                    self.show(x)
-                    sleep(0.1)
-
-        except KeyboardInterrupt:
-            pass
-            #if self.stdscr.getkey() == ord('c'): pass
-
-                            
-'''
-
 
 def main(stdscr):
     print()
