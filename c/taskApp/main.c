@@ -22,12 +22,12 @@ void saveToFile(todoList *list, const char *fileaname) {
 	if (fp != NULL) {
 		for (int i = 0; i < list->count; i++) {
 			fprintf(fp, "%d, %s", list->items[i].completed, list->items[i].task);
+			fclose(fp);
 		}
 	} else {
 		perror("Error opening file.");
 		return;
 	}
-	fclose(fp);
 
 }
 
@@ -66,7 +66,7 @@ void deleteItem(todoList *list, int index) {
 		printf("Invalid index.\n");
 		return;
 	} else {
-		for (int i = index; i < list->count -1; i++) {
+		for (int i = index; i < list->count -1; ++i) {
 			strcpy(list->items[i].task, list->items[i + 1].task);
 			list->items[i].completed = list->items[i+1].completed;
 		}
@@ -78,11 +78,12 @@ void deleteItem(todoList *list, int index) {
 void markComplete(todoList *list, int index) {
 	if (index < 0 || index >= list->count) {
 		printf("Invalid index.\n");
+		return;
 	} else list->items[index].completed = 1;
 }
 
 void printList(todoList *list) {
-	for (int i = 0; i < list->count; i++) {
+	for (int i = 0; i < list->count; ++i) {
 		printf("%d. [%c] %s\n", i + 1, (list->items[i].completed ? 'X' : ' '), list->items[i].task);
 	}
 }
@@ -106,7 +107,7 @@ int main() {
 		clear();
 		printw(":3-> Manage Your Task <-:3\n");
 		printw(". . . . . . . . . . . . . . . .\n");
-		for (int i = 0; i < todolist.count; i++) {
+		for (int i = 0; i < todolist.count; ++i) {
 			printw("%d. [%c] %s\n", i + 1, (todolist.items[i].completed ? 'x' : ' '), todolist.items[i].task);
 		}
 		printw("\n\n");
@@ -117,8 +118,9 @@ int main() {
 		printw("\nEnter your choice pookie: ");
 		refresh();
 
-		scanw("%d", &choice);
+		scanw("%d", &choice);	
 		refresh();
+		echo();
 		switch (choice) {
 			case 1:
 				clear();
@@ -151,7 +153,7 @@ int main() {
 				break;
 		}
 		refresh();
-	} while (choice != 0);
+	} while (choice != 4);
 	endwin();
 	return 0;
 		
