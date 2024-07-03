@@ -21,14 +21,14 @@ void saveToFile(todoList *list, const char *fileaname) {
 	FILE *fp = fopen(fileaname, "w");
 	if (fp != NULL) {
 		for (int i = 0; i < list->count; i++) {
-			fprintf(fp, "%d, %s", list->items[i].completed, list->items[i].task);
-			fclose(fp);
+			fprintf(fp, "%d, %s\n", list->items[i].completed, list->items[i].task);
+			
 		}
 	} else {
 		perror("Error opening file.");
 		return;
 	}
-
+	fclose(fp);
 }
 
 
@@ -118,9 +118,11 @@ int main() {
 		printw("4-> Save items and quit\n");
 		printw("\nEnter your choice pookie: ");
 		refresh();
+
 		echo();
 		scanw("%d", &choice);
 		refresh();
+
 		switch (choice) {
 			case 1:
 				clear();
@@ -158,36 +160,5 @@ int main() {
 	endwin();
 	return 0;
 		
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

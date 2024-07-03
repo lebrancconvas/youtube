@@ -1,2 +1,2 @@
 main: main.c
-	$(CC) main.c -o main -lncurses -std=c17
+	$(CC) main.c -o main -lncurses -Wall -Wextra -pedantic -std=c17
