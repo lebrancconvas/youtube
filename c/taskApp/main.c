@@ -45,6 +45,7 @@ void loadFromFile(todoList *list, const char *filename) {
 
 	} else {
 		printf("Error opening file.");
+		return;
 	}
 }
 
@@ -66,9 +67,9 @@ void deleteItem(todoList *list, int index) {
 		printf("Invalid index.\n");
 		return;
 	} else {
-		for (int i = index; i < list->count -1; ++i) {
+		for (int i = index; i < list->count - 1; ++i) {
 			strcpy(list->items[i].task, list->items[i + 1].task);
-			list->items[i].completed = list->items[i+1].completed;
+			list->items[i].completed = list->items[i + 1].completed;
 		}
 		list->count--;
 	}
@@ -117,10 +118,9 @@ int main() {
 		printw("4-> Save items and quit\n");
 		printw("\nEnter your choice pookie: ");
 		refresh();
-
-		scanw("%d", &choice);	
-		refresh();
 		echo();
+		scanw("%d", &choice);
+		refresh();
 		switch (choice) {
 			case 1:
 				clear();
@@ -136,6 +136,7 @@ int main() {
 				printw("Enter index to complete. (Don't cheat.)");
 				refresh();
 				scanw("%d", &choice);
+				noecho();
 				markComplete(&todolist, choice - 1);
 				break;
 			case 3:
