@@ -1,3 +1,4 @@
+// clone the taskApp folder , cd into it, type make and run the exceutable ./main
 #include <stdio.h>
 #include <ncurses.h>
 #include <stdlib.h>
