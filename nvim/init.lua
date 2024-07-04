@@ -76,7 +76,7 @@ local plugins = {
   "startup-nvim/startup.nvim",
   requires = {"nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim"},
   config = function()
-    require"startup".setup({theme = "asa"})
+    require"startup".setup({theme = "dashboard"})
   end }, 
 	
 	-- nvim tree
