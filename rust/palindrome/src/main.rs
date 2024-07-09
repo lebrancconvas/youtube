@@ -8,15 +8,15 @@ fn is_palindrome(s: &String) -> bool {
         .collect::<String>()
         .to_lowercase();
 
-    // Check if clean_str reads the same forwards and backwards
+    // Check if sanitized line reads the same forwards and backwards
     sanitize == sanitize.chars().rev().collect::<String>()
 }
 
 fn main() {
-    // Test cases
+    // Taking user input
     println!("Type a word or sentence ->");
     let mut word = String::new();
     io::stdin().read_line(&mut word).expect("Failed to read line.");
-    // Check each test case and print the result
+    // Pint nothing or not depening on the output
     println!("\"{word}\" is{} a palindrome.", if is_palindrome(&mut word) { "" } else { " not" });
 }
