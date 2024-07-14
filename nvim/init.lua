@@ -185,6 +185,15 @@ vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 local cmp = require("cmp")
 local cmp_format = require('lsp-zero').cmp_format({details = true})
 cmp.setup({
+	snippet = {
+		expand = function(args)
+		require('luasnip').lsp_expand(args.body)
+		end,
+	},
+	window = {
+		completion = cmp.config.window.bordered(),
+		documentation = cmp.config.window.bordered(),
+	},
     mapping = cmp.mapping.preset.insert({
       ['<Tab>'] = cmp.mapping.confirm({select = true}),
     }),
@@ -224,7 +233,7 @@ require'toggleterm'.setup {
 	shell = vim.o.shell,
 	float_opts = {
 		border = 'curved', 
-		width = 150,
+		width = 100,
 		height = 30,
 	},
 }
