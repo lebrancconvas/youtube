@@ -24,16 +24,27 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Plugins 
 
--- tokyonight
-
 local plugins = {
+--miasma
+{
+  "xero/miasma.nvim",
+  lazy = false,
+  priority = 1000,
+  config = function()
+    vim.cmd("colorscheme miasma")
+  end,
+},
+-- tokynight
 {
   "folke/tokyonight.nvim",
   lazy = false,
   priority = 1000,
   opts = {},
 },
-
+--barbar
+{
+	'romgrk/barbar.nvim'
+},
 
 -- lualine 
 {
@@ -47,7 +58,10 @@ local plugins = {
     dependencies = { 'nvim-lua/plenary.nvim' }
 },
 
-
+-- autoclose 
+{
+	'm4xshen/autoclose.nvim',
+},
 
 -- treesitter 
 {
@@ -68,7 +82,6 @@ local plugins = {
   end,
 },
 
-
 -- lsp & mason
 {"williamboman/mason.nvim"},
 {"williamboman/mason-lspconfig.nvim"},
@@ -80,12 +93,12 @@ local plugins = {
 {'L3MON4D3/LuaSnip'},
 
 --terminal 
-{'akinsho/toggleterm.nvim', version = "*", config = true},
-
+{
+	'akinsho/toggleterm.nvim', version = "*", config = true},
 }
 
 -- Setup 
- require("lazy").setup(plugins, opts)
+require("lazy").setup(plugins, opts)
 
 -- tokyonight
 require("tokyonight").setup({
@@ -94,12 +107,55 @@ require("tokyonight").setup({
 	end
 
 })
-vim.cmd.colorscheme "tokyonight"
+vim.cmd.colorscheme "miasma"
+-- barbar
+require("barbar").setup {
+	dependencies = {
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+      'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+    },
+    init = function() vim.g.barbar_auto_setup = false end,
+    opts = {
+      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+      -- animation = true,
+      -- insert_at_start = true,
+      -- …etc.
+    },
+    version = '^1.0.0',
+}
+local map = vim.api.nvim_set_keymap
+local opts = { noremap = true, silent = true }
+map('n', '<A-,>', '<Cmd>BufferPrevious<CR>', opts)
+map('n', '<A-.>', '<Cmd>BufferNext<CR>', opts)
+-- Re-order to previous/next
+map('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', opts)
+map('n', '<A->>', '<Cmd>BufferMoveNext<CR>', opts)
+-- Goto buffer in position...
+map('n', '<A-1>', '<Cmd>BufferGoto 1<CR>', opts)
+map('n', '<A-2>', '<Cmd>BufferGoto 2<CR>', opts)
+map('n', '<A-3>', '<Cmd>BufferGoto 3<CR>', opts)
+map('n', '<A-4>', '<Cmd>BufferGoto 4<CR>', opts)
+map('n', '<A-5>', '<Cmd>BufferGoto 5<CR>', opts)
+map('n', '<A-6>', '<Cmd>BufferGoto 6<CR>', opts)
+map('n', '<A-7>', '<Cmd>BufferGoto 7<CR>', opts)
+map('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', opts)
+map('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', opts)
+map('n', '<A-0>', '<Cmd>BufferLast<CR>', opts)
+-- Pin/unpin buffer
+map('n', '<A-p>', '<Cmd>BufferPin<CR>', opts)
+-- Close buffer
+map('n', '<A-c>', '<Cmd>BufferClose<CR>', opts)
+
 
 --	lualine 
 require("lualine").setup{
-	options = {theme = "tokyonight" }
+	--options = {theme = "tokyonight" }
 }
+require("autoclose").setup({
+   options = {
+      disabled_filetypes = { "text", "markdown" },
+   },
+})
 
 -- nvim tree
 vim.g.loaded_netrw = 1
@@ -134,7 +190,7 @@ cmp.setup({
     }),
     sources = cmp.config.sources({
       { name = 'nvim_lsp' },
-      { name = 'vsnip' }, -- For vsnip users.
+      { name = 'luasnip' },
     }, {
       { name = 'buffer' },
     })
@@ -158,7 +214,7 @@ require('mason-lspconfig').setup({
   },
 })
 
---terminads
+--terminal setup
 vim.keymap.set('n', '<c-`>', ':ToggleTerm<CR>')
 require'toggleterm'.setup {
 	shade_terminals = false,
